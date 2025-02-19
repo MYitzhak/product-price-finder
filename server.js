@@ -30,7 +30,7 @@ app.get("/api/search", async (req, res) => {
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
-                model: "gpt-4",
+                model: "gpt-4o-2024-05-13",
                 messages: [
                     {
                         role: "system",
@@ -54,8 +54,11 @@ app.get("/api/search", async (req, res) => {
         const parsedResults = JSON.parse(chatResponse); // Ensure the response is in JSON format
         res.json(parsedResults);
     } catch (error) {
-        console.error("Error querying OpenAI:", error.message);
-        res.status(500).json({ error: "Failed to fetch product data" });
+        console.error("Error querying OpenAI:", error.response ? error.response.data : error.message);
+        res.status(500).json({
+            error: "Failed to fetch product data",
+            details: error.response ? error.response.data : error.message
+        });
     }
 });
 
@@ -63,4 +66,3 @@ app.get("/api/search", async (req, res) => {
 app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on port ${PORT}`);
 });
-
